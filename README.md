@@ -1,73 +1,88 @@
-# ChatApplication  
+# ChatApplication
 
-## Overview  
-The Chat Application is a simple TCP server-client chat application implemented in Java. The server listens for incoming client connections and facilitates real-time communication among connected clients. This application provides a basic chat interface where users can send and receive messages.  
+![Logo](./clogo.png)
 
-## Server  
+## Overview
+The Chat Application is a simple TCP server-client chat application implemented in Java. The server listens for incoming client connections and facilitates real-time communication among connected clients. This application provides a basic chat interface where users can send and receive messages.
 
-### Overview  
-The server component establishes a listening socket, accepts incoming client connections, and broadcasts messages to all connected clients.  
+## Server
 
-### Prerequisites  
-- Java Development Kit (JDK) 8 or higher  
-- An IDE of your choice (e.g., IntelliJ IDEA, Eclipse)  
+### Overview
+The server component establishes a listening socket, accepts incoming client connections, and broadcasts messages to all connected clients. It includes a GUI for displaying messages.
 
-### How to Use  
-1. Clone the repository.  
-2. Open the project in your IDE.  
-3. Run the server's `main` method to start the server.  
+### Prerequisites
+- Java Development Kit (JDK) 8 or higher
+- An IDE of your choice (e.g., IntelliJ IDEA, Eclipse)
 
-### Code Overview  
+### How to Use
+1. Clone the repository.
+2. Open the project in your IDE.
+3. Run the server's `main` method to start the server.
 
-#### Initialization  
-- The server initializes a `ServerSocket` to listen for incoming connections on a specified port.  
+### Code Overview
 
-#### Client Interaction  
-- Each client connection is handled in a separate thread, allowing for simultaneous communication.  
-- The server reads messages from clients and broadcasts them to all connected clients.  
+#### Initialization
+- The server initializes a `ServerSocket` to listen for incoming connections on port `4313`.
 
-### Main Server Class  
-1. Sets up the `ServerSocket`.  
-2. Enters an infinite loop to accept client connections and spawn a new thread for each client.  
+#### Client Interaction
+- Each client connection is handled in a separate thread, allowing for simultaneous communication.
+- The server reads messages from clients and broadcasts them to all connected clients.
 
----  
+#### GUI Components
+- The server uses Swing for the GUI, including a heading, message area, and input field.
 
-## Client  
+#### Main Server Class
+1. Sets up the `ServerSocket`.
+2. Enters an infinite loop to accept client connections and spawns a new thread for each client.
 
-### Overview  
-The client component connects to the server and enables users to send and receive messages through a console interface.  
+### Server Code Example
+```java
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-### Prerequisites  
-- Java Development Kit (JDK) 8 or higher  
-- An IDE of your choice (e.g., IntelliJ IDEA, Eclipse)  
+public class Server extends JFrame {
+    ServerSocket server;
+    Socket socket;
+    BufferedReader br;
+    PrintWriter out;
 
-### How to Use  
-1. Clone the repository.  
-2. Open the project in your IDE.  
-3. Run the client's `main` method to start the client application.  
-4. Enter the server's IP address and port number when prompted.  
+    // GUI components
+    private JLabel heading = new JLabel("Server Area");
+    private JTextArea messageArea = new JTextArea();
+    private JTextField messageInput = new JTextField();
+    private Font font = new Font("Roboto", Font.PLAIN, 20);
 
-### Code Overview  
+    // Constructor
+    public Server() {
+        try {
+            server = new ServerSocket(4313);
+            System.out.println("Server is ready to accept connection");
+            System.out.println("Waiting...");
+            socket = server.accept();
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream());
 
-#### Initialization  
-- The client initializes a socket to connect to the server.  
+            createGUI();
+            handleEvents();
 
-#### Message Sending and Receiving  
-- The client captures user input to send messages to the server. Typing "quit" will end the application.  
-- A separate thread listens for incoming messages from the server and displays them in the console.  
+            startReading();
+            startWriting();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-### Main Client Class  
-1. Establishes a connection to the server using a `Socket`.  
-2. Starts a thread for sending messages and another for receiving messages.  
-3. Waits for user inputs to send messages and handles server disconnection.  
+    private void createGUI() {
+        this.setTitle("Server Messenger");
+        this.setSize(600, 750);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
----  
-
-## Contributing  
-Contributions are welcome! If you have any suggestions or improvements, feel free to submit a pull request.  
-
-## License  
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.  
-
-## Acknowledgements  
-- Java SDK documentation for guidance on socket programming.
+        heading.setFont(font);
+        messageArea.setFont(font);
