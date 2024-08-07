@@ -79,3 +79,8 @@ The client component connects to the server and enables users to send and receiv
 - Establishes a connection to the server using a `Socket`.
 - Starts a thread for sending messages and another for receiving messages.
 - Waits for user inputs to send messages and handles server disconnection.
+
+#Working
+
+![Screenshot 2024-08-07 235534](https://github.com/user-attachments/assets/28e297f7-eeeb-44d5-b905-aedb95685e8d)
+
